@@ -21,15 +21,7 @@ const GalleryUI = () => {
       {/* Navigation controls */}
       <Controls />
       
-      {/* Instructions for first-time users */}
-      <div className="fixed top-4 left-0 right-0 flex justify-center pointer-events-none">
-        <div className="bg-black bg-opacity-70 text-white px-6 py-3 rounded-lg">
-          <h1 className="text-xl font-bold mb-2 text-center">3D Art Gallery</h1>
-          <p className="text-sm text-center">
-            Click to enable mouse look, then use WASD to move around and explore artwork
-          </p>
-        </div>
-      </div>
+     
       
       {/* Artwork detail panel */}
       {activeArtwork && (

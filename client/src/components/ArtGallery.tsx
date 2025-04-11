@@ -74,8 +74,8 @@ const ArtGallery = () => {
       {/* Gallery room structure */}
       <Room />
       
-      {/* Art displays on walls */}
-      <ArtDisplay />
+      {/* Art displays on walls <ArtDisplay /> */}
+      
       
       {/* Navigation and collision detection */}
       <Navigation />
