@@ -16,7 +16,7 @@ const Room = () => {
   const roomLength = 20;
   const roomHeight = 5;
   const wallThickness = 0.2;
-  
+  /*
   // Define wall positions and dimensions for colliders
   useEffect(() => {
     const newColliders = [
@@ -44,6 +44,37 @@ const Room = () => {
     
     setColliders(newColliders);
   }, []);
+  */
+  useEffect(() => {
+    const newColliders = [
+      // ───────── walls ─────────
+      {
+        position: [0, roomHeight / 2, -roomLength / 2] as [number, number, number],
+        size:      [roomWidth, roomHeight, wallThickness] as [number, number, number],
+      },
+      {
+        position: [0, roomHeight / 2,  roomLength / 2] as [number, number, number],
+        size:      [roomWidth, roomHeight, wallThickness] as [number, number, number],
+      },
+      {
+        position: [ roomWidth / 2, roomHeight / 2, 0] as [number, number, number],
+        size:      [wallThickness, roomHeight, roomLength] as [number, number, number],
+      },
+      {
+        position: [-roomWidth / 2, roomHeight / 2, 0] as [number, number, number],
+        size:      [wallThickness, roomHeight, roomLength] as [number, number, number],
+      },
+  
+      // ─────── pedestal ───────
+      {
+        position: [0,roomHeight/2 , 0] as [number, number, number],
+        size:      [2, roomHeight, 2]  as [number, number, number],
+      },
+    ];
+  
+    setColliders(newColliders);
+  }, [setColliders]);
+  
 
   return (
     <group>
@@ -83,7 +114,7 @@ const Room = () => {
       {/* South Wall */}
       <mesh 
         position={[0, roomHeight / 2, roomLength / 2 - wallThickness / 2]} 
-        castShadow
+        //castShadow
         receiveShadow
       >
         <boxGeometry args={[roomWidth, roomHeight, wallThickness]} />
@@ -93,7 +124,7 @@ const Room = () => {
       {/* East Wall */}
       <mesh 
         position={[roomWidth / 2 - wallThickness / 2, roomHeight / 2, 0]} 
-        castShadow
+        //castShadow
         receiveShadow
       >
         <boxGeometry args={[wallThickness, roomHeight, roomLength]} />

@@ -32,7 +32,7 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
   // Define the port
   // Use environment variable PORT if available (common for hosting), otherwise default to 3000
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 3001;
 
   // Start the server
   server.listen(port, () => {

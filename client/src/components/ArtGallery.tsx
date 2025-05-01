@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useGallery } from "@/lib/stores/useGallery";
 import Room from "./Room";
+import ArtDisplay from "./ArtDisplay";
 import { PointerLockControls } from "@react-three/drei";
 import Navigation from "./Navigation";
-import ArtDisplay from "./ArtDisplay";
 
 const ArtGallery = () => {
   const controlsRef = useRef<any>(null);
@@ -14,10 +14,13 @@ const ArtGallery = () => {
     if (controlsRef.current) {
       const onLock = () => {
         setControlsLocked(true);
+        console.log("Controls locked");
+
       };
       
       const onUnlock = () => {
         setControlsLocked(false);
+        console.log("Controls unlocked");
       };
 
       controlsRef.current.addEventListener('lock', onLock);
@@ -32,6 +35,7 @@ const ArtGallery = () => {
     }
   }, [controlsRef.current]);
 
+  // Set up scene lighting
   return (
     <>
       <PointerLockControls ref={controlsRef} />
@@ -39,10 +43,10 @@ const ArtGallery = () => {
       {/* Ambient light for base illumination */}
       <ambientLight intensity={0.5} />
       
-      {/* Main directional light with shadows */}
-      <directionalLight 
+       {/* Main directional light with shadows */}
+       <directionalLight 
         position={[5, 8, 5]} 
-        intensity={5}
+        intensity={1.5}
         castShadow
         shadow-mapSize-width={1024}
         shadow-mapSize-height={1024}
@@ -58,10 +62,11 @@ const ArtGallery = () => {
         position={[0, 5, 0]} 
         angle={0.5} 
         penumbra={0.5} 
-        intensity={8} 
+        intensity={1.5} 
         castShadow 
         color="#ffffff"
-      />
+      /> 
+      
       
       {/* Gallery room structure */}
       <Room />
