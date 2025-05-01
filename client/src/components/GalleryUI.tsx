@@ -3,18 +3,11 @@ import { useGallery } from "@/lib/stores/useGallery";
 import Controls from "./Controls";
 import { Panel } from "./ui/panel";
 import { X } from "lucide-react";
-import { useAudio } from "@/lib/stores/useAudio";
 
 const GalleryUI = () => {
   const { activeArtwork, setActiveArtwork } = useGallery();
-  const { playSuccess } = useAudio();
   
   // Play success sound when artwork is selected
-  useEffect(() => {
-    if (activeArtwork) {
-      playSuccess();
-    }
-  }, [activeArtwork]);
   
   return (
     <>

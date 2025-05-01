@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useGallery } from "@/lib/stores/useGallery";
-import { useAudio } from "@/lib/stores/useAudio";
 
 const Controls = () => {
   const { isControlsLocked, setControlsLocked } = useGallery();
-  const { isMuted, toggleMute } = useAudio();
   const [showControls, setShowControls] = useState(true);
   
   // Hide controls after a delay
@@ -27,10 +25,7 @@ const Controls = () => {
         setShowControls(true);
       }
       
-      // Toggle audio with M key
-      if (e.key === "m") {
-        toggleMute();
-      }
+
     };
     
     window.addEventListener("keydown", handleKeyPress);

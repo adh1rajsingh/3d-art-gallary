@@ -1,65 +1,54 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
+import express from "express";
+import { createServer } from "http"; // Use Node's built-in http server
 import { setupVite, serveStatic, log } from "./vite";
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+// No need for express.json() or express.urlencoded() if no API
+// No need for complex API logging middleware
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
-    }
-  });
-
+// Simple request logger (optional, remove if not needed)
+app.use((req, _res, next) => {
+  log(`${req.method} ${req.originalUrl}`);
   next();
 });
 
+// Create the HTTP server instance using the Express app
+const server = createServer(app);
+
+// Determine if running in development or production
+// NODE_ENV is commonly set by tools like nodemon, tsx, or hosting platforms
+const isDevelopment = process.env.NODE_ENV === "development";
+
+// Asynchronously set up Vite or serve static files
 (async () => {
-  const server = await registerRoutes(app);
-
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
-
-    res.status(status).json({ message });
-    throw err;
-  });
-
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
+  if (isDevelopment) {
+    // Setup Vite middleware in development
     await setupVite(app, server);
   } else {
+    // Serve static files in production
     serveStatic(app);
   }
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client
-  const port = 3000;
-  server.listen(port, "127.0.0.1", () => {
-    log(`✅ Server running at http://127.0.0.1:${port}`);
+  // Define the port
+  // Use environment variable PORT if available (common for hosting), otherwise default to 3000
+  const port = process.env.PORT || 3000;
+
+  // Start the server
+  server.listen(port, () => {
+    log(
+      `✅ Server running in ${
+        isDevelopment ? "development" : "production"
+      } mode at http://localhost:${port}`,
+    );
   });
 })();
+
+// Optional: Basic error handling (catches errors passed via next(e))
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  log(`Error: ${err.message}`, "error");
+  console.error(err.stack); // Log the full stack trace for debugging
+  res
+    .status(err.status || 500)
+    .send(isDevelopment ? err.stack : "Internal Server Error");
+});
