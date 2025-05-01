@@ -10,6 +10,7 @@ export interface Artwork {
   dimensions: string;
   color: string; // Keep for fallback or remove if completely unused
   imageUrl: string; // <-- ADD THIS PROPERTY
+  scale?: number;
   
 }
 
@@ -34,9 +35,11 @@ export const artworks: Artwork[] = [
     description: "...",
     medium: "Acrylic on canvas",
     dimensions: "150 x 120 cm",
+    scale: 1.5,
     color: "#E97451",
     // --- REPLACE WITH YOUR ACTUAL CDN LINK ---
     imageUrl: "/balls.jpg",
+
   },
   {
     id: "artwork-3",

@@ -27,16 +27,13 @@ export default function ArtworkPanel({
   onSelect,
 }: ArtworkPanelProps) {
   /* load the image once; Drei caches identical URLs */
-  const texture = useTexture(artwork.imageUrl);
-
-  // Configure colour‑space & quality only when texture changes
-  useMemo(() => {
-    if (texture) {
-      texture.colorSpace  = THREE.SRGBColorSpace;  // proper gamma
-      texture.anisotropy  = 8;                     // sharper at oblique angles
-      texture.needsUpdate = true;
-    }
-  }, [texture]);
+  const texture = useTexture(artwork.imageUrl, (t) => {
+    t.flipY = false;
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = 8;
+    t.needsUpdate = true;
+  });
+  
 
   return (
     <group

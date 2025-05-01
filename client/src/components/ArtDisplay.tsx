@@ -8,41 +8,27 @@ import * as THREE from "three";
 import { artworks } from "@/data/artworks";
 import { useGallery } from "@/lib/stores/useGallery";
 
-/**
- * A single gallery room full of 2‑D artworks plus one central 3‑D piece.
- * Each wall panel consists of a frame (plain grey) and an inner plane that
- * shows the actual picture loaded from its `imageUrl`.
- */
 const ArtDisplay: React.FC = () => {
   const { setActiveArtwork } = useGallery();
 
-  /* ─────────────────────────── texture loading ─────────────────────────── */
-  // Build an array of every image URL (or a 1‑px transparent placeholder)
   const textureUrls = useMemo(
-    () =>
-      artworks.map((a) =>
-        a.imageUrl && a.imageUrl.trim() !== ""
-          ? a.imageUrl
-          : "/transparent-1px.png" // put this tiny png in /public
-      ),
+    () => artworks.map((a) => a.imageUrl && a.imageUrl.trim() !== "" ? a.imageUrl : "/transparent-1px.png"),
     []
   );
+  
+  const textures = useTexture(
+    textureUrls,
+    (texture: THREE.Texture) => {
+      texture.flipY = false;
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.needsUpdate = true;
+    }
+  );
+  
+  
 
-  // Drei loads them all in one go and returns them in the same order
-  const textures = useTexture(textureUrls);
-
-  // Ensure correct colour‑space + orientation once (memoised)
-  useMemo(() => {
-    textures.forEach((t) => {
-      t.colorSpace = THREE.SRGBColorSpace; // R152+ replaces Encoding
-      t.flipY = false;
-    });
-  }, [textures]);
-
-  /* ─────────────────────────── interaction state ────────────────────────── */
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  /* ───────────────────────── floating central art ───────────────────────── */
   const rotatingArtRef = useRef<THREE.Mesh>(null);
   useFrame(({ clock }) => {
     if (rotatingArtRef.current) {
@@ -51,27 +37,21 @@ const ArtDisplay: React.FC = () => {
     }
   });
 
-  /* ───────────────────── calculate wall mounting positions ───────────── */
   const wallPositions = useMemo(() => {
     const positions: { position: [number, number, number]; rotation: [number, number, number] }[] = [];
     const roomWidth = 20;
     const roomLength = 20;
     const wallOffset = 0.21;
 
-
-    // north
     for (let x = -7; x <= 7; x += 3.5) {
       positions.push({ position: [x, 2, -roomLength / 2 + wallOffset], rotation: [0, 0, 0] });
     }
-    // south
     for (let x = -7; x <= 7; x += 3.5) {
       positions.push({ position: [x, 2, roomLength / 2 - wallOffset], rotation: [0, Math.PI, 0] });
     }
-    // east
     for (let z = -7; z <= 7; z += 3.5) {
       positions.push({ position: [roomWidth / 2 - wallOffset, 2, z], rotation: [0, -Math.PI / 2, 0] });
     }
-    // west
     for (let z = -7; z <= 7; z += 3.5) {
       positions.push({ position: [-roomWidth / 2 + wallOffset, 2, z], rotation: [0, Math.PI / 2, 0] });
     }
@@ -79,18 +59,26 @@ const ArtDisplay: React.FC = () => {
     return positions;
   }, []);
 
-  /* ─────────────────────────── helpers ──────────────────────────────────── */
   const handleArtworkClick = (artwork: (typeof artworks)[number]) => {
     setActiveArtwork(artwork);
   };
 
-  /* ─────────────────────────── render ───────────────────────────────────── */
   return (
     <group>
-      {/* 2‑D artworks on the walls */}
       {artworks.slice(0, wallPositions.length).map((artwork, index) => {
         const { position, rotation } = wallPositions[index];
         const isHovered = hoveredId === artwork.id;
+        const texture = textures[index];
+
+        const imgWidth = texture.image.width;
+        const imgHeight = texture.image.height;
+        const scale = (artwork as any).scale ?? 1; // <- Optional scale multiplier
+
+        const artHeight = 1.3 * scale;
+        const artWidth = (imgWidth / imgHeight) * artHeight;
+        const framePadding = 0.1 * scale;
+        const frameWidth = artWidth + 2 * framePadding;
+        const frameHeight = artHeight + 2 * framePadding;
 
         return (
           <group key={artwork.id} position={position} rotation={rotation}>
@@ -102,32 +90,32 @@ const ArtDisplay: React.FC = () => {
               onPointerOut={() => setHoveredId(null)}
               onClick={() => handleArtworkClick(artwork)}
             >
-              <planeGeometry args={[2, 1.5]} />
+              <planeGeometry args={[frameWidth, frameHeight]} />
               <meshStandardMaterial color={isHovered ? "#444444" : "#000000"} />
             </mesh>
 
             {/* Picture */}
-            <mesh position={[0, 0, 0.01]}> {/* slight forward offset */}
-              <planeGeometry args={[1.8, 1.3]} />
-              <meshStandardMaterial map={textures[index]} toneMapped={false} />
+            <mesh position={[0, 0, 0.01]}>
+              <planeGeometry args={[artWidth, artHeight]} />
+              <meshStandardMaterial map={texture} toneMapped={false} />
             </mesh>
 
             {/* Title */}
             <Text
-              position={[0, -0.9, 0.05]}
+              position={[0, -(frameHeight / 2 + 0.2), 0.05]}
               fontSize={0.1}
               color="#333"
               anchorX="center"
               anchorY="middle"
-              maxWidth={1.8}
+              maxWidth={frameWidth}
             >
               {artwork.title}
             </Text>
 
-            {/* Hover hint overlay */}
+            {/* Hover overlay */}
             {isHovered && (
-              <mesh position={[0, 0, 0.1]}> {/* sits in front */}
-                <planeGeometry args={[2, 1.5]} />
+              <mesh position={[0, 0, 0.1]}>
+                <planeGeometry args={[frameWidth, frameHeight]} />
                 <meshBasicMaterial color="#fff" transparent opacity={0.1} />
               </mesh>
             )}
@@ -135,7 +123,7 @@ const ArtDisplay: React.FC = () => {
         );
       })}
 
-      {/* Central 3‑D piece */}
+      {/* Central rotating 3D art */}
       <mesh
         ref={rotatingArtRef}
         position={[0, 1.5, 0]}
@@ -152,7 +140,6 @@ const ArtDisplay: React.FC = () => {
         />
       </mesh>
 
-      {/* Central title */}
       <Text position={[0, 0.8, 0]} fontSize={0.15} color="#fff" anchorX="center" anchorY="middle">
         {artworks[artworks.length - 1].title}
       </Text>
