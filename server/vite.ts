@@ -75,7 +75,7 @@ export async function setupVite(app: Express, server: Server) {
 // Serves static files from the build output directory (dist)
 export function serveStatic(app: Express) {
   // Path to the production build output (should match your build script output)
-  const distPath = path.resolve(__dirname, "..", "dist");
+  const distPath = path.resolve(__dirname, "..", "client");
   log(`Serving static files from: ${distPath}`, "express");
 
   if (!fs.existsSync(distPath)) {
