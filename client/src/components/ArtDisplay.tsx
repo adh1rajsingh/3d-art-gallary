@@ -140,9 +140,7 @@ const ArtDisplay: React.FC = () => {
         />
       </mesh>
 
-      <Text position={[0, 0.8, 0]} fontSize={0.15} color="#fff" anchorX="center" anchorY="middle">
-        {artworks[artworks.length - 1].title}
-      </Text>
+     
     </group>
   );
 };

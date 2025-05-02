@@ -62,7 +62,7 @@ const ArtGallery = () => {
         position={[0, 5, 0]} 
         angle={0.5} 
         penumbra={0.5} 
-        intensity={1.5} 
+        intensity={5} 
         castShadow 
         color="#ffffff"
       /> 
