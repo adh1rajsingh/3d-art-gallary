@@ -84,7 +84,7 @@ const ArtDisplay: React.FC = () => {
           <group key={artwork.id} position={position} rotation={rotation}>
             {/* Frame */}
             <mesh
-              castShadow
+              //castShadow
               receiveShadow
               onPointerOver={() => setHoveredId(artwork.id)}
               onPointerOut={() => setHoveredId(null)}

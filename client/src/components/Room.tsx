@@ -104,7 +104,7 @@ const Room = () => {
       {/* North Wall */}
       <mesh 
         position={[0, roomHeight / 2, -roomLength / 2 + wallThickness / 2]} 
-        castShadow
+        //castShadow
         receiveShadow
       >
         <boxGeometry args={[roomWidth, roomHeight, wallThickness]} />
@@ -134,7 +134,7 @@ const Room = () => {
       {/* West Wall */}
       <mesh 
         position={[-roomWidth / 2 + wallThickness / 2, roomHeight / 2, 0]} 
-        castShadow
+        //castShadow
         receiveShadow
       >
         <boxGeometry args={[wallThickness, roomHeight, roomLength]} />
