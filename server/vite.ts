@@ -4,7 +4,7 @@ import path, { dirname } from "path";
 import { fileURLToPath } from "url";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
-import viteConfig from "../vite.config"; // Assuming vite.config.js/ts is in the root
+import viteConfig from "../vite.config"; 
 
 // Helper to get __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -12,7 +12,6 @@ const __dirname = dirname(__filename);
 
 const viteLogger = createLogger();
 
-// Simple logger function (kept from original)
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
     hour: "numeric",
@@ -27,8 +26,8 @@ export function log(message: string, source = "express") {
 export async function setupVite(app: Express, server: Server) {
   log("Setting up Vite middleware for development...", "vite");
   const vite = await createViteServer({
-    ...viteConfig, // Use your existing Vite config
-    configFile: false, // Don't look for another config file
+    ...viteConfig, 
+    configFile: false, 
     customLogger: {
       ...viteLogger,
       error: (msg, options) => {
@@ -38,10 +37,10 @@ export async function setupVite(app: Express, server: Server) {
       },
     },
     server: {
-      middlewareMode: true, // Crucial for Express integration
-      hmr: { server }, // Integrate HMR with the HTTP server
+      middlewareMode: true, 
+      hmr: { server }, 
     },
-    appType: "custom", // We handle the HTML serving
+    appType: "custom",
   });
 
   // Use Vite's middleware
@@ -74,7 +73,6 @@ export async function setupVite(app: Express, server: Server) {
 
 // Serves static files from the build output directory (dist)
 export function serveStatic(app: Express) {
-  // Path to the production build output (should match your build script output)
   const distPath = path.resolve(__dirname, "..", "client");
   log(`Serving static files from: ${distPath}`, "express");
 
@@ -89,8 +87,6 @@ export function serveStatic(app: Express) {
   // Serve static files (JS, CSS, images, etc.)
   app.use(express.static(distPath));
 
-  // Catch-all route to serve index.html for client-side routing in production
-  // This ensures direct navigation to /about, /contact, etc., works
   app.use("*", (_req, res) => {
     res.sendFile(path.resolve(distPath, "index.html"));
   });

@@ -24,7 +24,7 @@ const Navigation = () => {
   const directionRef = useRef<THREE.Vector3>(new THREE.Vector3());
   
   // Movement constants
-  const SPEED = 5;
+  const SPEED = 2;
   const GRAVITY = 30;
   const playerRadius = 0.5;
   const jumpHeight = 1.0;

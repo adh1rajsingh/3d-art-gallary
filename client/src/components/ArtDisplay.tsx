@@ -1,4 +1,3 @@
-// client/src/components/ArtDisplay.tsx
 
 import React, { useMemo, useRef, useState } from "react";
 import { Text, useTexture } from "@react-three/drei";

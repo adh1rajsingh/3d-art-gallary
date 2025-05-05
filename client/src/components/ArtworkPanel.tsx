@@ -40,7 +40,6 @@ export default function ArtworkPanel({
       onPointerOver={() => onHover(true)}
       onPointerOut={() => onHover(false)}
       onClick={onSelect}
-      // lift slightly so the frame sits flush with the wall surface
       position={[0, 0, FRAME_D / 2]}
     >
       {/* wooden frame */}

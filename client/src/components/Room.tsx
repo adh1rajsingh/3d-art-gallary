@@ -16,38 +16,9 @@ const Room = () => {
   const roomLength = 20;
   const roomHeight = 5;
   const wallThickness = 0.2;
-  /*
-  // Define wall positions and dimensions for colliders
+
   useEffect(() => {
     const newColliders = [
-      // North wall
-      {
-        position: [0, roomHeight / 2, -roomLength / 2],
-        size: [roomWidth, roomHeight, wallThickness],
-      },
-      // South wall
-      {
-        position: [0, roomHeight / 2, roomLength / 2],
-        size: [roomWidth, roomHeight, wallThickness],
-      },
-      // East wall
-      {
-        position: [roomWidth / 2, roomHeight / 2, 0],
-        size: [wallThickness, roomHeight, roomLength],
-      },
-      // West wall
-      {
-        position: [-roomWidth / 2, roomHeight / 2, 0],
-        size: [wallThickness, roomHeight, roomLength],
-      },
-    ];
-    
-    setColliders(newColliders);
-  }, []);
-  */
-  useEffect(() => {
-    const newColliders = [
-      // ───────── walls ─────────
       {
         position: [0, roomHeight / 2, -roomLength / 2] as [number, number, number],
         size:      [roomWidth, roomHeight, wallThickness] as [number, number, number],

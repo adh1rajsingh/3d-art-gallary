@@ -1,4 +1,3 @@
-// client/src/components/GalleryUI.tsx
 
 import { useGallery } from "@/lib/stores/useGallery";
 import Controls from "./Controls";
@@ -18,7 +17,6 @@ const GalleryUI = () => {
       {/* Movement / navigation helper */}
       <Controls />
 
-      {/* ──────────────── Artwork detail modal ──────────────── */}
       {activeArtwork && (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/30 p-4">
           <Panel className="w-full max-w-md">
@@ -35,7 +33,7 @@ const GalleryUI = () => {
               </button>
             </div>
 
-            {/* Preview image  (object-contain so the whole artwork is visible) */}
+            {/* Preview image*/}
             {activeArtwork.imageUrl ? (
               <img
                 src={activeArtwork.imageUrl}
